@@ -127,6 +127,11 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
   because len λˡ + len λʳ ≤ d). Verified numerically for every numeric file. Worth a comment in the code
   or a sentence in the paper (it matches eq. (246) of Appendix D).
 
+A minimal fix for the first three items and for the silent `None` in `lambda_mu_content` is in
+`review/wba_tools_fixes.patch` (not applied). With it, `psi_wb` is a homomorphism, `J₁ = δ` for p = 0,
+and the regenerated idempotents are mathematically identical to the stored database (checked for
+(p,q) = (0,2), (0,3), (2,2), (1,3), (2,3), (0,5) and two numeric-d files).
+
 ### 4. Repository-level
 
 * No README: nothing says which notebook belongs to which section, which Sage/Mathematica versions

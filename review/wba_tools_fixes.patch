@@ -1,0 +1,64 @@
+--- a/wba_tools.py	2026-10-11 00:26:32.000269579 +0000
++++ b/wba_tools.py	2026-10-11 01:28:05.979311237 +0000
+@@ -104,16 +104,16 @@
+         
+         R = self.base_ring()
+         one = R.one()
+-        d = {self.one_basis(): 0}
++        diagrams = WalledBrauerDiagrams(self.p, self.q)
++        coeffs = {self.one_basis(): R(self.d) if j > self.p else R.zero()}   # + delta, eq. (85)
+         for i in range(1, j):
+-            if convertI([[i, -j], [j, -i]]) in WalledBrauerDiagrams(self.p,self.q):
+-                d[convertI([[i, -j], [j, -i]])] = one
+-            if convertI([[i, j], [-i, -j]]) in WalledBrauerDiagrams(self.p,self.q):
+-                d[convertI([[i, j], [-i, -j]])] = -one
+-            if j > self.p:
+-                d[convertI([[], []])] = self.d
+-        ans = self._from_dict(d, remove_zeros=True)
+-        return ans
++            transposition = convertI([[i, -j], [j, -i]])
++            contraction = convertI([[i, j], [-i, -j]])
++            if transposition in diagrams:        # i, j on the same side of the wall
++                coeffs[transposition] = one
++            if contraction in diagrams:          # i, j on different sides of the wall
++                coeffs[contraction] = -one
++        return self._from_dict(coeffs, remove_zeros=True)
+     
+ 
+ 
+@@ -133,7 +133,7 @@
+ 
+ def psi_one_wb(diag,d,p,q,K):
+     k = p+q
+-    mat=zero_matrix(QQ,d**k,sparse=True)
++    mat=zero_matrix(K,d**k,sparse=True)
+     index_range = [a for a in range(-k,0)] + [a for a in range(1,k+1)]
+     
+     i_j_dict = {key: None for key in index_range}
+@@ -148,14 +148,14 @@
+             i_j_dict[pair[0]] = n_vec[m]
+             i_j_dict[pair[1]] = n_vec[m]
+ 
+-        j = ZZ([i_j_dict[k-i+1] for i in range(1,k+1)], base=d) 
+-        i = ZZ([i_j_dict[-k+i-1] for i in range(1,k+1)], base=d)
+-        mat[i,j] = 1
++        row = ZZ([i_j_dict[k-i+1] for i in range(1,k+1)], base=d)    # top row = bra, eq. (44)
++        col = ZZ([i_j_dict[-k+i-1] for i in range(1,k+1)], base=d)   # bottom row = ket
++        mat[row,col] = 1
+     return mat
+ 
+ def psi_wb(v,d,p,q,K):      
+     lst=WalledBrauerDiagrams(p,q).list()
+-    vec=vectorize_element(v,lst,K)
++    vec=vectorize_element_wb(v,lst,K)
+     mat=zero_matrix(K,d**(p+q),sparse=True)
+     
+     for i in range(len(lst)):
+@@ -174,6 +174,7 @@
+         if Mu[0].size()>Lambda[0].size():
+             tmp=L.difference(L_prev)
+             return ZZ(tmp[0][1]-tmp[0][0])
++        raise ValueError("This is not a valid edge")
+     else:
+         if Mu[0].size()<Lambda[0].size():
+             tmp=L_prev.difference(L)
