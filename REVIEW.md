@@ -14,8 +14,8 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
   `wba_idempotents_db/` pass every check (see table below), and the repo's own generation code
   reproduces the stored files byte for byte.
 * **The published numbers are correct**: Example 7.1, the value F = 8/9 in Sect. 7.2, the
-  feasible regions of Examples 7.2/7.3 (Figs. 6/7), Tables 3–7 and 14 of the 16 entries of Table 2
-  (the two d = 3, n = 4 entries are still being recomputed).
+  feasible regions of Examples 7.2/7.3 (Figs. 6/7), Tables 3–7 and 15 of the 16 entries of Table 2
+  (the d = 3, n = 4 inversion entry is still being recomputed).
   The only error found in the paper is a typo in Table 7.
 * **The application notebooks have real problems**, though, and do not establish some of the
   paper's claims as written. The most important ones:
@@ -178,7 +178,7 @@ covariant C.
 | f(U) | d | n = 1 | n = 2 | n = 3 | n = 4 |
 |---|---|---|---|---|---|
 | Uᵀ | 2 | 0.500000 ✓ | 0.750000 ✓ | 0.933013 ✓ | 1.000000 ✓ |
-| Uᵀ | 3 | 0.222222 ✓ | 0.407407 ✓ | 0.626597 ✓ | PENDING |
+| Uᵀ | 3 | 0.222222 ✓ | 0.407407 ✓ | 0.626597 ✓ | 0.799250 ✓ |
 | U⁻¹ | 2 | 0.500000 ✓ | 0.750000 ✓ | 0.933013 ✓ | 1.000000 ✓ |
 | U⁻¹ | 3 | 0.222222 ✓ | 0.333333 ✓ | 0.444444 ✓ | PENDING |
 
