@@ -57,7 +57,7 @@ TOK = re.compile(r'''
   | (?P<str>"(?:[^"\\]|\\.)*")
   | (?P<num>\d+\.?\d*`?[\d.]*(?:\*\^-?\d+)?)
   | (?P<sym>[A-Za-z$][A-Za-z0-9$`]*|\#\d*)
-  | (?P<op>->|:>|\[|\]|\{|\}|\(|\)|,|=|\+|-|\*|/|&|\^|;)
+  | (?P<op><\||\|>|->|:>|\[|\]|\{|\}|\(|\)|,|==|=|\+|-|\*|/|&|\^|;|\.|<|>|!|\?|@|_)
 ''', re.S | re.X)
 
 
@@ -142,7 +142,7 @@ class P:
             elif v == '&':
                 self.take()
                 left = ('Arith', [left, '&', ('sym', '')])
-            elif v in ('+', '-', '*', '/', '^'):
+            elif v in ('+', '-', '*', '/', '^', '=', '==', '.', '<', '>', '?', '@', '_'):
                 # arithmetic in options (e.g. 3.85*^9 or sizes); keep as raw
                 self.take()
                 right = self.atom()
@@ -156,6 +156,9 @@ class P:
             inner = self.expr()
             assert self.take()[1] == ')'
             node = inner
+        elif v == '<|':
+            items = self.seq('|>')
+            node = ('List', items)
         elif v == '{':
             items = self.seq('}')
             node = ('List', items)
