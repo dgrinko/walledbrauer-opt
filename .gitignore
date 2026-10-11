@@ -1,0 +1,11 @@
+# OS / editor
+.DS_Store
+__MACOSX/
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Too large for GitHub (210 MB); regenerate with generate_walled_brauer_idempotents.ipynb
+wba_idempotents_db/primitive_8_0_2.txt
