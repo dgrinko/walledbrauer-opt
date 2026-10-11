@@ -2,7 +2,12 @@
 
 Scope: everything in this repository (`wba_tools.py`, the two Sage notebooks, `app1.nb`–`app3.nb`,
 `wba_idempotents_db/`) checked against D. Grinko, M. Ozols, *Linear Programming with
-Unitary-Equivariant Constraints*, Commun. Math. Phys. 405, 278 (2024).
+Unitary-Equivariant Constraints*, Commun. Math. Phys. 405, 278 (2024). The Sect. 7.4 notebooks
+(`app4.nb`, `guess_magic_4_1_2.nb`, `compute_matrix_units_and_blocks.nb`, `archive/`) were added and
+reviewed afterwards (section 5 below).
+
+The findings below describe the code **as it was originally published**; line numbers refer to
+that version. Most of them have since been fixed in the repository; see [Status](#status-of-the-fixes).
 
 Every number below was recomputed with code written from scratch (`review/`, pure Python with
 numpy/scipy/sympy/cvxpy; no Sage, no Mathematica). In addition, `wba_tools.py` itself was run
@@ -15,7 +20,8 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
   reproduces the stored files byte for byte.
 * **The published numbers are correct**: Example 7.1, the value F = 8/9 in Sect. 7.2, the
   feasible regions of Examples 7.2/7.3 (Figs. 6/7), Tables 3–7 and all 16 entries of Table 2.
-  The only error found in the paper is a typo in Table 7.
+  The only errors found in the paper are a typo in Table 7 and the normalisation in eq. (171)
+  (see section 5).
 * **The application notebooks have real problems**, though, and do not establish some of the
   paper's claims as written. The most important ones:
   1. `app2.nb` (majority vote) does not solve the LP (158) given in the paper: the cell that
@@ -27,9 +33,31 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
      checks it. With a different (equally valid) choice the extracted blocks give a wildly wrong
      region. The published formulas (160)–(169) are nevertheless correct (verified).
   3. The notebook for Sect. 7.4 / Table 2 is not in the repository, although the paper says it
-     is on GitHub [GO22].
+     is on GitHub [GO22]. (It has since been added as `app4.nb`; see section 5.)
   4. `app2.nb` and `app3.nb` load from `./idempotents_db/`, but the folder is
      `wba_idempotents_db/`, so neither notebook runs as shipped.
+
+## Status of the fixes
+
+Fixed in the repository (October 2026), without changing any result:
+
+| Finding | Fix |
+|---|---|
+| `app2.nb` optimised the 2-rule LP | the third assignment of `f` is removed, so the 3-rule LP (158) is solved; `symConstraints[d]` is now the default `symConstraints[_]`; the "general d" cell gives the corrected closed form below; stale outputs removed |
+| `app3.nb` basis alignment unchecked | a check cell after `In[1174]` tests that the extracted blocks are multiplicative (it must return ≈ 0); the late exploratory cells use `px, py, pz` instead of the global `x, y, z` (`z` is the symbolic dimension in the Sage data) |
+| wrong data paths in `app2.nb`, `app3.nb` | both read `wba_idempotents_db/` via `NotebookDirectory[]` |
+| Sect. 7.4 code missing | `app4.nb` (from the authors' `app4_v8.nb`, with the two bugs of section 5 fixed), `guess_magic_4_1_2.nb`, `compute_matrix_units_and_blocks.nb`, the data in `idempotents/`, `blocks/`, `app4_data/`, and an exact check `review/app4_certificate_check.py` |
+| `wba_tools.py`: `psi_wb`, `psi_one_wb`, `jucys_murphy`, `lambda_mu_content` | fixed as described in section 3 (the former `review/wba_tools_fixes.patch`) |
+| no README | `README.md` |
+| `bratelli_diagram_walled_brauer.ipynb` | renamed `bratteli_diagram_walled_brauer.ipynb`; uses `sage.misc.latex_standalone.TikzPicture` instead of `slabbe`, no longer shadows `ord` |
+| generation notebook | stale error outputs cleared; loop set to p+q ≤ 6, which is what the database contains |
+| typos in comments, absolute paths in saved outputs, front-end caches, custom `Evaluator` options | removed / fixed in all notebooks |
+
+Not changed: the readability suggestions for `wba_tools.py`, the hard-coded `symConstraints` indices,
+the out-of-order evaluation state of `app3.nb`, and the eigenvector-based block extraction in `app3.nb`
+(the new check cell tests it; `blocks/blocks_1_3_d.m` is a basis-independent alternative). The
+notebooks were edited as text, without Mathematica, so saved outputs that no longer matched the code
+were removed rather than regenerated.
 
 ## Verification results
 
@@ -38,12 +66,13 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
 | DB: 27 symbolic files `primitive_p_q.txt` (generic z) | path set = Bratteli paths; Σ ε_T = 1; J_k ε_T = ε_T J_k = c_T(k) ε_T with J_k from eq. (85) and contents from Sect. 5.3; contents distinct; Tr ε_T = Weyl dimension of λ; ε_T² = ε_T (p+q ≤ 5) | all pass |
 | DB: 60 numeric files `primitive_p_q_d.txt` (d < p+q) | same identities after applying ψ_d (exact, on random vectors mod 2³¹−1); path set = truncated Bratteli diagram (len λˡ + len λʳ ≤ d) | all pass |
 | DB: every stored diagram is a walled Brauer diagram | 28,496 distinct diagrams | pass |
-| DB reproducibility | `generate_walled_brauer_idempotents.ipynb` (under passagemath) regenerates the files byte for byte (12 files tested) | pass |
+| DB reproducibility | `generate_walled_brauer_idempotents.ipynb` (under passagemath) with the original `wba_tools.py` regenerates the files byte for byte (12 files tested); with the fixed `wba_tools.py`, all 87 files are mathematically identical (72 byte for byte, 15 symbolic files differ only in how coefficients are printed) | pass |
 | Table 3, 4, 5, 6, 7 | recomputed (Table 5 via characters: n = Σ_{α⊢p,β⊢q} z_α⁻¹z_β⁻¹ Σ_{λ⊢p+q, len λ≤d} χ^λ(α∪β)², independent of eq. (200)) | all entries match; **typo**: Table 7, p+q = 9, d = 8 reads "3,62,879", should be 362,879 |
 | Example 7.1, eq. (152) | exact symbolic recomputation | identical; c₁ = 0.821569391, c₂ = 0.913830846, p³(c₂) = 0.566968021; n = 1 bound (153) and minimum 1/2 at 1/2 + 2^(−4/3) confirmed; n = 1..8 curves increase with n |
 | Sect. 7.2, F = 8/9 | LP (158) with all three rules: 8/9 for every tested d (2–10, 12, 16, 20, 50, 100); unrestricted SDP on the full d⁴×d⁴ Choi matrix (no idempotents, no extra symmetry): 8/9 for d = 2, 3 | value correct; notebook issues below |
 | Example 7.2 (d = 2), 7.3 (d = 3) | support function of the region defined by (160)–(169) vs. a direct SDP over the full Choi matrix, 42 directions | agree to ≤ 2·10⁻⁷; symmetric optimum 5/9 (d=2), 1/2 (d=3) = universal cloner |
 | Table 2 (16 entries) | symmetry-reduced comb SDP, written independently (`review/table2_check.py`) | see Table 2 section below |
+| Table 2, Uᵀ, d = 2, n = 4 (exact) | the exact comb in `guess_magic_4_1_2.nb` checked on the full 1024×1024 Choi matrix (`review/app4_certificate_check.py`) | PSD, comb conditions and fidelity 1 hold exactly |
 
 ## Findings in the code
 
@@ -107,6 +136,7 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
 
 * **`psi_wb` cannot run**: `wba_tools.py:158` calls `vectorize_element`, which does not exist
   (`NameError`); it should be `vectorize_element_wb`. Only used in commented-out notebook code.
+  *(Fixed, together with the next three items.)*
 * **`psi_one_wb` builds the transpose of ψ.** Rows are indexed by the negative (bottom) labels and
   columns by the positive (top) labels (`wba_tools.py:151-153`), whereas eq. (44) has the top row as the
   bra. Since Sage's `a*b` puts `a` on top of `b` (checked), `psi_wb(a*b) = psi_wb(b)·psi_wb(a)`,
@@ -127,21 +157,24 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
   because len λˡ + len λʳ ≤ d). Verified numerically for every numeric file. Worth a comment in the code
   or a sentence in the paper (it matches eq. (246) of Appendix D).
 
-A minimal fix for the first three items and for the silent `None` in `lambda_mu_content` is in
-`review/wba_tools_fixes.patch` (not applied). With it, `psi_wb` is a homomorphism, `J₁ = δ` for p = 0,
-and the regenerated idempotents are mathematically identical to the stored database (checked for
-(p,q) = (0,2), (0,3), (2,2), (1,3), (2,3), (0,5) and two numeric-d files).
+A minimal fix for the first three items and for the silent `None` in `lambda_mu_content` has been
+applied to `wba_tools.py`. With it, `psi_wb` is a homomorphism, `J₁ = δ` for p = 0, and the
+regenerated idempotents are mathematically identical to the stored database (all 87 files; 72 of
+them byte for byte).
 
 ### 4. Repository-level
 
 * No README: nothing says which notebook belongs to which section, which Sage/Mathematica versions
   were used (SageMath 9.4, Mathematica 12.3 from the metadata), or that `app1` does not use the database
-  (it hard-codes the traces Σ_λ c_λ f^λ s_λ(λ₀, λ₁) in `pData`; all eight are correct).
-* Sect. 7.4 (Table 2) code is missing.
+  (it hard-codes the traces Σ_λ c_λ f^λ s_λ(λ₀, λ₁) in `pData`; all eight are correct). *(Fixed.)*
+* Sect. 7.4 (Table 2) code is missing. *(Fixed.)*
 * `generate_walled_brauer_idempotents.ipynb` cell 4 loops to p+q = 7, but its saved output ends in a
-  `KeyboardInterrupt` at (p,q) = (1,3), and the repository contains p+q ≤ 6 only.
+  `KeyboardInterrupt`: all pairs up to p+q = 7 finished in the symbolic loop, and the run was
+  interrupted in the numeric-d loop for (p,q) = (0,7). The traceback also shows that the executed code
+  wrote to `./idempotents_db/`, not `./wba_idempotents_db/`. The repository contains p+q ≤ 6 plus
+  (7,0,2). *(Outputs cleared, loop set to p+q ≤ 6.)*
 * `bratelli_diagram_walled_brauer.ipynb` depends on the third-party `slabbe` package and shadows the
-  builtin `ord`.
+  builtin `ord`. *(Fixed.)*
 
 ## Readability suggestions (`wba_tools.py`, notebooks)
 
@@ -161,7 +194,35 @@ and the regenerated idempotents are mathematically identical to the stored datab
 * Exchange data with Mathematica in a structured format (JSON, or a Mathematica-readable dump)
   instead of re-parsing Sage's `str()` output with string substitutions (`Parse` in `app2.nb`/`app3.nb`),
   which breaks if Sage changes its printing.
-* Typos in Mathematica comments: "Pares", "Rmove", "curcly", "eingevectors".
+* Typos in Mathematica comments: "Pares", "Rmove", "curcly", "eingevectors". *(Fixed.)*
+
+### 5. Sect. 7.4 notebooks (added after the first review)
+
+The authors' working notebooks for Table 2 were `app4_v5.nb` … `app4_v8.nb`, `guess_magic_4_1_2.nb`
+and `compute_matrix_units_and_blocks.nb`. `app4_v8.nb` (now `app4.nb`) is the most complete version but
+had two bugs, both fixed:
+
+* **Wrong `Flatten` level in the numeric ansatz** (`In[105]`): the `Table` over (λ, μ, i, j, k, l) has
+  six levels, but `Flatten[..., 1]` merged only the first two, so `Plus@@` tried to add nested lists of
+  different shapes (the saved output is the message "Objects of unequal length … cannot be combined"
+  after 1356 s). It is now `Flatten[..., 5]`, which gives a flat list of matrices.
+* **(q,p) instead of (p,q) for the left register** in `Contract2Vec`, `ChoiTensorId` and the
+  constraint cell. With (q,p), Uᵀ with n = 4 needs `blocks_1_4_d.m` and U⁻¹ with n = 4, d = 3 needs
+  `blocks_0_5_3.m`, which were never generated; with (p,q) it needs `blocks_4_1_d.m` and
+  `blocks_5_0_3.m`, which exist. The (p,q) convention is the one of `app4_v5.nb` (which gave
+  0.9999999989 for Uᵀ, n = 4, d = 2) and of the paper (constraint i lives in B_{i−1,1} ⊗ B_{i−1,0}).
+  Reading the left register in the B_{q,p} basis amounts to a partial transpose, so both conventions
+  give equivalent constraints when the data exist.
+
+`app4.nb` has not been re-run after these fixes (no Mathematica was available); the Table 2 values are
+confirmed independently by `review/table2_check.py`, and the exact n = 4, d = 2 solution in
+`guess_magic_4_1_2.nb` by `review/app4_certificate_check.py`. The earlier versions are kept in
+`archive/` (see `archive/README.md`).
+
+**Normalisation in the paper.** Eq. (171) reads Tr C = 1. With that normalisation the optimum of (173)
+would be d^{−(n+1)} times the values of Table 2. The values in Table 2 (and the code) use the standard
+normalisation C₀ = 1, i.e. Tr_{I₁} C₁ = 1_P and Tr C = d^{n+1}, for which Tr(C Ω_{n,d}) is the average
+channel fidelity. Eq. (171) should read Tr C = d^{n+1}.
 
 ## Table 2
 

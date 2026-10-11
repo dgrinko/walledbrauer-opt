@@ -5,19 +5,10 @@
 
 (* CreatedBy='Mathematica 12.3' *)
 
-(*CacheID: 234*)
-(* Internal cache information:
-NotebookFileLineBreakTest
-NotebookFileLineBreakTest
-NotebookDataPosition[       158,          7]
-NotebookDataLength[     60411,       1678]
-NotebookOptionsPosition[     57626,       1626]
-NotebookOutlinePosition[     58141,       1645]
-CellTagsIndexPosition[     58098,       1642]
-WindowFrame->Normal*)
-
 (* Beginning of Notebook Content *)
 Notebook[{
+Cell["Quantum majority vote (Sect. 7.2, eqs. (155)-(158)) for p = 3 inputs and q = 1 output. Loads the primitive idempotents of A^d_{3,1} from wba_idempotents_db/ (Sage output) and solves the LP (158); the optimum is F = 8/9 for every d >= 3. Trace preservation is imposed by matching diagram coefficients, which requires d >= p = 3 (eq. (118)); d = 2 is not supported by this notebook.", "Text"],
+
 Cell[BoxData[
  RowBox[{"SetOptions", "[", 
   RowBox[{
@@ -42,7 +33,7 @@ Cell[BoxData[{
    RowBox[{"Import", "[", 
     RowBox[{
      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
-     "\"\<./idempotents_db/primitive_5_1.txt\>\""}], "]"}]}], 
+     "\"\<wba_idempotents_db/primitive_5_1.txt\>\""}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
@@ -51,7 +42,7 @@ Cell[BoxData[{
    RowBox[{"Import", "[", 
     RowBox[{
      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
-     "\"\<./idempotents_db/primitive_3_1_2.txt\>\""}], "]"}]}], 
+     "\"\<wba_idempotents_db/primitive_3_1_2.txt\>\""}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
@@ -60,7 +51,7 @@ Cell[BoxData[{
    RowBox[{"Import", "[", 
     RowBox[{
      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
-     "\"\<./idempotents_db/primitive_3_1_3.txt\>\""}], "]"}]}], 
+     "\"\<wba_idempotents_db/primitive_3_1_3.txt\>\""}], "]"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
@@ -71,7 +62,7 @@ Cell[BoxData[{
    RowBox[{"Import", "[", 
     RowBox[{
      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
-     "\"\<./idempotents_db/primitive_3_1.txt\>\""}], "]"}]}], ";"}]}], "Input",\
+     "\"\<wba_idempotents_db/primitive_3_1.txt\>\""}], "]"}]}], ";"}]}], "Input",\
 
  InitializationCell->True,
  CellChangeTimes->{{3.8534948707881327`*^9, 3.8534948812762413`*^9}, {
@@ -90,7 +81,7 @@ Cell[BoxData[
  RowBox[{
   RowBox[{"(*", " ", 
    RowBox[{
-   "Pares", " ", "Sage", " ", "output", " ", "into", " ", "Mathematica"}], 
+   "Parse", " ", "Sage", " ", "output", " ", "into", " ", "Mathematica"}], 
    " ", "*)"}], "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
@@ -102,8 +93,8 @@ Cell[BoxData[
       "\[IndentingNewLine]", 
       RowBox[{"(*", " ", 
        RowBox[{
-       "Rmove", " ", "the", " ", "first", " ", "and", " ", "last", " ", 
-        "curcly", " ", "brace"}], " ", "*)"}], "\[IndentingNewLine]", 
+       "Remove", " ", "the", " ", "first", " ", "and", " ", "last", " ", 
+        "curly", " ", "brace"}], " ", "*)"}], "\[IndentingNewLine]", 
       RowBox[{
        RowBox[{"t", "=", 
         RowBox[{"StringTake", "[", 
@@ -546,21 +537,6 @@ Cell[BoxData[
           RowBox[{"{", "1", "}"}], ",", 
           RowBox[{"{", "2", "}"}]}], "}"}]}]}], "|>"}]}], ";"}], 
    "\[IndentingNewLine]", 
-   RowBox[{
-    RowBox[{"f", "=", 
-     RowBox[{"<|", 
-      RowBox[{
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"0", ",", "0", ",", "0"}], "}"}], "\[Rule]", 
-        RowBox[{"{", 
-         RowBox[{"{", "0", "}"}], "}"}]}], ",", 
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"0", ",", "0", ",", "1"}], "}"}], "\[Rule]", 
-        RowBox[{"{", 
-         RowBox[{"{", "0", "}"}], "}"}]}]}], "|>"}]}], ";"}], 
-   "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{
      RowBox[{"f", "=", 
@@ -774,7 +750,7 @@ Cell[BoxData[{
       SubscriptBox["a", "8"]}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
-   RowBox[{"symConstraints", "[", "d", "]"}], "=", 
+   RowBox[{"symConstraints", "[", "_", "]"}], "=", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{
@@ -823,45 +799,10 @@ Cell[BoxData[
  CellLabel->
   "In[271]:=",ExpressionUUID->"bbefe676-1c90-4377-a705-6e1a1a211fa0"],
 
-Cell[CellGroupData[{
-
 Cell[BoxData["lin"], "Input",
  CellChangeTimes->{{3.853941460120989*^9, 3.853941460532352*^9}},
  CellLabel->
   "In[272]:=",ExpressionUUID->"5a543ee3-e6cb-44de-a9d2-08acf7a99903"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"fid", "\[Rule]", 
-    FractionBox["8", "9"]}], ",", 
-   RowBox[{
-    SubscriptBox["a", "1"], "\[Rule]", "0"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "2"], "\[Rule]", "0"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "3"], "\[Rule]", "0"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "4"], "\[Rule]", 
-    FractionBox["2", "5"]}], ",", 
-   RowBox[{
-    SubscriptBox["a", "5"], "\[Rule]", "2"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "6"], "\[Rule]", "0"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "7"], "\[Rule]", "0"}], ",", 
-   RowBox[{
-    SubscriptBox["a", "8"], "\[Rule]", 
-    FractionBox["10", "3"]}], ",", 
-   RowBox[{
-    SubscriptBox["a", "9"], "\[Rule]", 
-    FractionBox["10", "3"]}], ",", 
-   RowBox[{
-    SubscriptBox["a", "10"], "\[Rule]", "0"}]}], "}"}]], "Output",
- CellChangeTimes->{{3.8539414609387827`*^9, 3.853941474074542*^9}},
- CellLabel->
-  "Out[272]=",ExpressionUUID->"54d8eb9c-ec88-4b09-8f1c-e3ba42d8eae8"]
-}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -1350,7 +1291,7 @@ Cell[BoxData[
 0318000bef46"]
 }, Open  ]],
 
-Cell[CellGroupData[{
+Cell["The general-d cells below need the LP with a symbolic d: build it with d unassigned and an inert head, e.g. linP = Inactive[LinearOptimization][-fid, {...}, {...}], then solve with Activate[linP /. d -> dd]. The closed form below is feasible for all d >= 3 (for d = 3 the paths are numbered differently; see the d = 3 cell).", "Text"],
 
 Cell[BoxData[{
  RowBox[{
@@ -1392,36 +1333,6 @@ Cell[BoxData[{
   "In[292]:=",ExpressionUUID->"1d4aa9a8-782a-4a2e-b575-906dd194030f"],
 
 Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   FractionBox["8", "9"], ",", "0", ",", "0", ",", "0", ",", 
-   FractionBox[
-    RowBox[{
-     RowBox[{"-", "2"}], "+", "d"}], 
-    RowBox[{
-     RowBox[{"(", 
-      RowBox[{
-       RowBox[{"-", "3"}], "+", "d"}], ")"}], " ", 
-     RowBox[{"(", 
-      RowBox[{"1", "+", "d"}], ")"}]}]], ",", 
-   FractionBox[
-    RowBox[{"2", "+", "d"}], "3"], ",", "0", ",", "0", ",", 
-   FractionBox[
-    RowBox[{"2", " ", 
-     RowBox[{"(", 
-      RowBox[{"1", "+", "d"}], ")"}]}], "3"], ",", 
-   FractionBox[
-    RowBox[{"2", " ", 
-     RowBox[{"(", 
-      RowBox[{"1", "+", "d"}], ")"}]}], "3"], ",", "0"}], "}"}]], "Output",
- CellChangeTimes->{{3.853684632115056*^9, 3.853684691640003*^9}, {
-  3.853684727622492*^9, 3.8536847823185177`*^9}, {3.85368540074859*^9, 
-  3.8536854078293457`*^9}},
- CellLabel->
-  "Out[295]=",ExpressionUUID->"dfc41c60-974d-4f81-9613-74c7ad4c9390"]
-}, Open  ]],
-
-Cell[BoxData[
  RowBox[{
   RowBox[{"(*", " ", 
    RowBox[{"General", " ", "d", " ", "solution"}], " ", "*)"}], 
@@ -1437,14 +1348,7 @@ Cell[BoxData[
     RowBox[{
      SubscriptBox["a", "3"], "\[Rule]", "0"}], ",", 
     RowBox[{
-     SubscriptBox["a", "4"], "\[Rule]", 
-     FractionBox[
-      RowBox[{"d", "-", "2"}], 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{"d", "-", "3"}], ")"}], 
-       RowBox[{"(", 
-        RowBox[{"d", "+", "1"}], ")"}]}]]}], ",", 
+     SubscriptBox["a", "4"], "\[Rule]", "0"}], ",", 
     RowBox[{
      SubscriptBox["a", "5"], "\[Rule]", 
      FractionBox[
@@ -1466,7 +1370,9 @@ Cell[BoxData[
       RowBox[{"(", 
        RowBox[{"d", "+", "1"}], ")"}]}]}], ",", 
     RowBox[{
-     SubscriptBox["a", "10"], "\[Rule]", "0"}]}], "}"}]}]], "Input",
+     SubscriptBox["a", "10"], "\[Rule]", 
+     FractionBox[
+      RowBox[{"d", "-", "2"}], "3"]}]}], "}"}]}]], "Input",
  CellChangeTimes->{{3.853684806099333*^9, 3.853684806604875*^9}, {
   3.8536848571795397`*^9, 3.853684895074891*^9}, {3.853685416818446*^9, 
   3.8536854211444817`*^9}},ExpressionUUID->"d5261766-31d5-4d29-b3cf-\
@@ -1507,8 +1413,6 @@ Cell[BoxData[
   3.853685134562169*^9}},ExpressionUUID->"10fe3916-fd68-46d3-8b4c-\
 8488d85997f5"],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[{
  RowBox[{
   RowBox[{"lin", "/.", 
@@ -1523,14 +1427,7 @@ Cell[BoxData[{
      RowBox[{
       SubscriptBox["a", "3"], "\[Rule]", "0"}], ",", 
      RowBox[{
-      SubscriptBox["a", "4"], "\[Rule]", 
-      FractionBox[
-       RowBox[{"d", "-", "2"}], 
-       RowBox[{
-        RowBox[{"(", 
-         RowBox[{"d", "-", "3"}], ")"}], 
-        RowBox[{"(", 
-         RowBox[{"d", "+", "1"}], ")"}]}]]}], ",", 
+      SubscriptBox["a", "4"], "\[Rule]", "0"}], ",", 
      RowBox[{
       SubscriptBox["a", "5"], "\[Rule]", 
       FractionBox[
@@ -1552,77 +1449,15 @@ Cell[BoxData[{
        RowBox[{"(", 
         RowBox[{"d", "+", "1"}], ")"}]}]}], ",", 
      RowBox[{
-      SubscriptBox["a", "10"], "\[Rule]", "0"}]}], "}"}]}], 
+      SubscriptBox["a", "10"], "\[Rule]", 
+      FractionBox[
+       RowBox[{"d", "-", "2"}], "3"]}]}], "}"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{"Simplify", "@", "%"}]}], "Input",
  CellChangeTimes->{{3.853683992643962*^9, 3.853684003897204*^9}, 
    3.853685435408845*^9},
  CellLabel->
-  "In[296]:=",ExpressionUUID->"3c41c349-063a-45cc-8400-83e6e5503505"],
-
-Cell[BoxData[
- RowBox[{"LinearOptimization2", "[", 
-  RowBox[{
-   RowBox[{"-", 
-    FractionBox["8", "9"]}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"True", ",", "True", ",", "True", ",", 
-       RowBox[{
-        FractionBox[
-         RowBox[{
-          RowBox[{"-", "2"}], "+", "d"}], 
-         RowBox[{
-          RowBox[{"(", 
-           RowBox[{
-            RowBox[{"-", "3"}], "+", "d"}], ")"}], " ", 
-          RowBox[{"(", 
-           RowBox[{"1", "+", "d"}], ")"}]}]], "\[GreaterEqual]", "0"}], ",", 
-       RowBox[{
-        RowBox[{"2", "+", "d"}], "\[GreaterEqual]", "0"}], ",", "True", ",", 
-       "True", ",", 
-       RowBox[{
-        RowBox[{"1", "+", "d"}], "\[GreaterEqual]", "0"}], ",", 
-       RowBox[{
-        RowBox[{"1", "+", "d"}], "\[GreaterEqual]", "0"}], ",", "True"}], 
-      "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{
-      "True", ",", "True", ",", "True", ",", "True", ",", "True", ",", 
-       "True"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"True", ",", "True"}], "}"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"True", ",", "True", ",", "True"}], "}"}]}], "}"}], ",", 
-   RowBox[{"{", 
-    RowBox[{
-     FractionBox["8", "9"], ",", "0", ",", "0", ",", "0", ",", 
-     FractionBox[
-      RowBox[{
-       RowBox[{"-", "2"}], "+", "d"}], 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{
-         RowBox[{"-", "3"}], "+", "d"}], ")"}], " ", 
-       RowBox[{"(", 
-        RowBox[{"1", "+", "d"}], ")"}]}]], ",", 
-     FractionBox[
-      RowBox[{"2", "+", "d"}], "3"], ",", "0", ",", "0", ",", 
-     FractionBox[
-      RowBox[{"2", " ", 
-       RowBox[{"(", 
-        RowBox[{"1", "+", "d"}], ")"}]}], "3"], ",", 
-     FractionBox[
-      RowBox[{"2", " ", 
-       RowBox[{"(", 
-        RowBox[{"1", "+", "d"}], ")"}]}], "3"], ",", "0"}], "}"}]}], 
-  "]"}]], "Output",
- CellChangeTimes->{{3.853683993108285*^9, 3.853684004039427*^9}, 
-   3.8536854365292253`*^9},
- CellLabel->
-  "Out[297]=",ExpressionUUID->"5bbcbd19-ae47-48e5-9c1b-2c1630c82283"]
-}, Open  ]]
+  "In[296]:=",ExpressionUUID->"3c41c349-063a-45cc-8400-83e6e5503505"]
 },
 WindowSize->{1391, 847},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
@@ -1634,53 +1469,3 @@ StyleDefinitions->"Default.nb",
 ExpressionUUID->"7460d726-f55b-47f6-b40e-3007da6ae683"
 ]
 (* End of Notebook Content *)
-
-(* Internal cache information *)
-(*CellTagsOutline
-CellTagsIndex->{}
-*)
-(*CellTagsIndex
-CellTagsIndex->{}
-*)
-(*NotebookFileOutline
-Notebook[{
-Cell[558, 20, 512, 12, 46, "Input",ExpressionUUID->"02882a3c-34b0-443d-850c-6c888e5c24ef",
- InitializationCell->True],
-Cell[1073, 34, 2035, 52, 103, "Input",ExpressionUUID->"176561ad-e133-465e-83f9-db31603cd3a0",
- InitializationCell->True],
-Cell[3111, 88, 6040, 142, 509, "Input",ExpressionUUID->"556b934f-e845-40c6-8402-0f4b2d3ad1bc",
- InitializationCell->True],
-Cell[9154, 232, 5993, 152, 215, "Input",ExpressionUUID->"8f11062a-64d2-4873-a46d-eb823040b54a",
- InitializationCell->True],
-Cell[15150, 386, 2606, 71, 194, "Input",ExpressionUUID->"467ade19-8c2d-45a8-9595-a8e5ef52eedf",
- InitializationCell->True],
-Cell[17759, 459, 1127, 20, 46, "Input",ExpressionUUID->"1e92b7bc-1813-4736-8167-2fa61cd0ff00",
- InitializationCell->True],
-Cell[18889, 481, 5005, 128, 220, "Input",ExpressionUUID->"9fba5600-9a9e-4c8c-8118-0ade734d28b6"],
-Cell[23897, 611, 1688, 46, 52, "Input",ExpressionUUID->"ab142fa3-6d0b-4eab-b593-797eaeead58b"],
-Cell[25588, 659, 1516, 44, 52, "Input",ExpressionUUID->"56097736-335e-4dcd-9533-b9d8e328888b"],
-Cell[27107, 705, 1873, 52, 75, "Input",ExpressionUUID->"e5ac690f-91d9-4805-8407-bd4325cdcf89"],
-Cell[28983, 759, 964, 31, 52, "Input",ExpressionUUID->"cce61a2b-4be5-474a-a2e4-ff4ed754a43b"],
-Cell[29950, 792, 1445, 31, 30, "Input",ExpressionUUID->"bbefe676-1c90-4377-a705-6e1a1a211fa0"],
-Cell[CellGroupData[{
-Cell[31420, 827, 178, 3, 30, "Input",ExpressionUUID->"5a543ee3-e6cb-44de-a9d2-08acf7a99903"],
-Cell[31601, 832, 981, 30, 51, "Output",ExpressionUUID->"54d8eb9c-ec88-4b09-8f1c-e3ba42d8eae8"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[32619, 867, 215, 4, 30, "Input",ExpressionUUID->"92cd2f45-b525-4e3e-8d57-eaa264689c5a"],
-Cell[32837, 873, 16311, 476, 336, "Output",ExpressionUUID->"506c84ec-a5b5-49d2-a27b-0318000bef46"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[49185, 1354, 1268, 37, 94, "Input",ExpressionUUID->"1d4aa9a8-782a-4a2e-b575-906dd194030f"],
-Cell[50456, 1393, 904, 27, 53, "Output",ExpressionUUID->"dfc41c60-974d-4f81-9613-74c7ad4c9390"]
-}, Open  ]],
-Cell[51375, 1423, 1572, 49, 72, "Input",ExpressionUUID->"d5261766-31d5-4d29-b3cf-00bb5ad3c77d"],
-Cell[52950, 1474, 1077, 33, 69, "Input",ExpressionUUID->"10fe3916-fd68-46d3-8b4c-8488d85997f5"],
-Cell[CellGroupData[{
-Cell[54052, 1511, 1543, 49, 73, "Input",ExpressionUUID->"3c41c349-063a-45cc-8400-83e6e5503505"],
-Cell[55598, 1562, 2012, 61, 95, "Output",ExpressionUUID->"5bbcbd19-ae47-48e5-9c1b-2c1630c82283"]
-}, Open  ]]
-}
-]
-*)
-
