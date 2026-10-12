@@ -1291,7 +1291,7 @@ Cell[BoxData[
 0318000bef46"]
 }, Open  ]],
 
-Cell["The general-d cells below need the LP with a symbolic d: build it with d unassigned and an inert head, e.g. linP = Inactive[LinearOptimization][-fid, {...}, {...}], then solve with Activate[linP /. d -> dd]. The closed form below is feasible for all d >= 3 (for d = 3 the paths are numbered differently; see the d = 3 cell).", "Text"],
+Cell["The general-d cells below need the LP with a symbolic d: build it with d unassigned and an inert head, e.g. lin = Inactive[LinearOptimization][-fid, {...}, {...}]; the cells below then solve it with LinearOptimization @@ (lin /. d -> dd). The closed form below is feasible for all d >= 3 (for d = 3 the paths are numbered differently; see the d = 3 cell).", "Text"],
 
 Cell[BoxData[{
  RowBox[{

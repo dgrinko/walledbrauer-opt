@@ -31,8 +31,8 @@ paper: Sect. 7.4 and Table 2 are covered by [`app4.nb`](../app4.nb) and
 - **Saved outputs** come from several kernel sessions, often for parameter sets other than the visible one. The
   notebooks cannot be re-run top to bottom as saved.
 - **Changes made for the repository** (text edits, October 2026, without Mathematica): output and message cells
-  that showed the author's absolute local paths were deleted (v5 Out[49]; v6 the `Import::nffil` message of
-  In[100]; v7 Out[49] and Out[69]). The custom notebook option `Evaluator->"kernel_N"` was removed (v7,
+  that showed the author's absolute local paths were deleted (v5 Out[49]; v6 the `Import::nffil` message under the
+  unlabelled `eqConstr=Import[...]` cell; v7 Out[49] and Out[69]). The custom notebook option `Evaluator->"kernel_N"` was removed (v7,
   `bratteli_diagram.nb`), and the front-end cache was stripped. Nothing else was changed.
 
 ## Notebooks
@@ -61,7 +61,8 @@ parameter sets:
 - (3,1,2), U^T with n = 3, d = 2: a hand reduction to parameters a1..a15 and a feasible point `soltest`. Its
   objective, (2+√3)/4 = 0.933013, matches Table 2 but is never printed. The reduced SDP In[308] is infeasible by
   construction: it adds a4 == 1/3 and a13 == 0 to the relation a13 == 3 a4.
-- (3,0,2): only the failed `Import` of `eq_3_0_2_exact.m`, a file that never existed.
+- (3,0,2): only a failed `Import` of `eq_3_0_2_exact.m`, a file that is not in the upload. Its `Import::nffil`
+  message, which showed a local path, was deleted for the repository, so the notebook no longer shows this.
 - The final {1,1,3}, U^T with n = 1, d = 3. **Its saved value 0.29055 (Out[301]) is an artefact; Table 2 gives
   0.222222 = 2/9.** The parameter cell was evaluated after the matrix units, ansatz and constraints of an earlier
   run, and the old naming rule loads the d = 2 file `elementary_1_1.m` for d = 3.
@@ -105,8 +106,9 @@ It needs the third-party package GroupMath by R. M. Fonseca (version 1.1.2 was u
 notebook. It reads and writes no
 files, so it works from any folder. The saved run is {p,q,d} = {6,1,7}, which is not one of the paper's figures,
 and Out[7]/Out[8] are stale, from (3,2,2). Paper parameters: Fig. 1 is {4,0,d} with d = 4, 3, 2; Fig. 2 is {2,2,d}
-with d ≥ 4; Fig. 3 is {2,2,d} with d = 3, 2. `OrderWBA` has misplaced brackets (one `If` gets four arguments),
-which do no harm on valid vertices. The repository's figure source is the Sage notebook, which marks removed edges
+with d ≥ 4; Fig. 3 is {2,2,d} with d = 3, 2. `OrderWBA` has misplaced brackets: two `If`s get four arguments, and the test
+`Total[x[[1]]]<=x[[3]] && Total[y[[1]]]<y[[3]]` gets no False branch, so it returns `Null` instead of `False`. This does
+no harm, because `RelationGraph` only draws an edge when the rule returns `True`. The repository's figure source is the Sage notebook, which marks removed edges
 in red instead of deleting vertices.
 
 ## Data: `app4_data/`
@@ -119,7 +121,7 @@ variables follow the naming `xλμ` plus the sorted pairs (ik, jl). The P-last r
 **`eq_4_1_2.m`.** The P-last constraints in machine precision. They agree with `eq_4_1_2_exact.m` to 9e-16 and match
 the output of v5's constraint cell. No notebook reads this file, and none of the notebooks here writes it.
 
-**`eq_4_1_2_50.m`.** The P-last constraints at about 50 digits. They agree with `eq_4_1_2_exact.m` to 6e-17. The
+**`eq_4_1_2_50.m`.** The P-last constraints at about 50 digits. They agree with `eq_4_1_2_exact.m` to about 1e-55, i.e. to their working precision. The
 file comes from a version that is not in the repository, and no notebook reads it.
 
 **`eq_4_1_2_50_left.m`.** The P-first constraints, written by `app4_v7.nb` (In[69]) and read by it (In[278]). They

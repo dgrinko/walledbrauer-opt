@@ -15,9 +15,9 @@ under passagemath (Sage 10.8) to reproduce the database and to test individual f
 
 ## Verdict
 
-* **The core method and the idempotent database are correct.** All 87 files in
-  `wba_idempotents_db/` pass every check (see table below), and the repo's own generation code
-  reproduces the stored files byte for byte.
+* **The core method and the idempotent database are correct.** All 88 files in
+  `wba_idempotents_db/` (the 87 files with p+q ≤ 6, plus `primitive_7_0_2.txt`) pass every check
+  (see table below), and the repo's own generation code reproduces the stored files byte for byte.
 * **The published numbers are correct**: Example 7.1, the value F = 8/9 in Sect. 7.2, the
   feasible regions of Examples 7.2/7.3 (Figs. 6/7), Tables 3–7 and all 16 entries of Table 2.
   The only errors found in the paper are a typo in Table 7 and the normalisation in eq. (171)
@@ -50,7 +50,8 @@ Fixed in the repository (October 2026), without changing any result:
 | `wba_tools.py`: `psi_wb`, `psi_one_wb`, `jucys_murphy`, `lambda_mu_content` | fixed as described in section 3 (the former `review/wba_tools_fixes.patch`) |
 | no README | `README.md` |
 | `bratelli_diagram_walled_brauer.ipynb` | renamed `bratteli_diagram_walled_brauer.ipynb`; uses `sage.misc.latex_standalone.TikzPicture` instead of `slabbe`, no longer shadows `ord` |
-| generation notebook | stale error outputs cleared; loop set to p+q ≤ 6, which is what the database contains |
+| generation notebook | stale error outputs cleared; loop set to p+q ≤ 6 (`primitive_7_0_2.txt` was produced separately) |
+| `app1.nb` | replaced by the authors' newer version, which adds `traceNew` (recomputes the `pData` traces from `idempotents/`); `FName` always appends `_d`, matching the file names in `idempotents/`; the saved `In[49]` now reads `maxprobs[[3,1]]`, the n = 3 result its saved output shows (it was evaluated when `maxprobs[[1]]` held n = 3); orphan plot `Out[42]` removed; optional check cell `traceNew = trace` after `In[16]` |
 | typos in comments, absolute paths in saved outputs, front-end caches, custom `Evaluator` options | removed / fixed in all notebooks |
 
 Not changed: the readability suggestions for `wba_tools.py`, the hard-coded `symConstraints` indices,
@@ -64,15 +65,15 @@ were removed rather than regenerated.
 | Item (paper) | Independent result | Status |
 |---|---|---|
 | DB: 27 symbolic files `primitive_p_q.txt` (generic z) | path set = Bratteli paths; Σ ε_T = 1; J_k ε_T = ε_T J_k = c_T(k) ε_T with J_k from eq. (85) and contents from Sect. 5.3; contents distinct; Tr ε_T = Weyl dimension of λ; ε_T² = ε_T (p+q ≤ 5) | all pass |
-| DB: 60 numeric files `primitive_p_q_d.txt` (d < p+q) | same identities after applying ψ_d (exact, on random vectors mod 2³¹−1); path set = truncated Bratteli diagram (len λˡ + len λʳ ≤ d) | all pass |
-| DB: every stored diagram is a walled Brauer diagram | 28,496 distinct diagrams | pass |
-| DB reproducibility | `generate_walled_brauer_idempotents.ipynb` (under passagemath) with the original `wba_tools.py` regenerates the files byte for byte (12 files tested); with the fixed `wba_tools.py`, all 87 files are mathematically identical (72 byte for byte, 15 symbolic files differ only in how coefficients are printed) | pass |
+| DB: 61 numeric files `primitive_p_q_d.txt` (d < p+q; 60 with p+q ≤ 6, plus (7,0,2)) | same identities after applying ψ_d (exact, on random vectors mod 2³¹−1); path set = truncated Bratteli diagram (len λˡ + len λʳ ≤ d) | all pass |
+| DB: every stored diagram is a walled Brauer diagram | 33,536 diagrams (distinct within each file, summed over files) | pass |
+| DB reproducibility | `generate_walled_brauer_idempotents.ipynb` (under passagemath) with the original `wba_tools.py` regenerates the files byte for byte (12 files tested); with the fixed `wba_tools.py`, all 87 files with p+q ≤ 6 are mathematically identical (72 byte for byte, 15 symbolic files differ only in how coefficients are printed) | pass |
 | Table 3, 4, 5, 6, 7 | recomputed (Table 5 via characters: n = Σ_{α⊢p,β⊢q} z_α⁻¹z_β⁻¹ Σ_{λ⊢p+q, len λ≤d} χ^λ(α∪β)², independent of eq. (200)) | all entries match; **typo**: Table 7, p+q = 9, d = 8 reads "3,62,879", should be 362,879 |
 | Example 7.1, eq. (152) | exact symbolic recomputation | identical; c₁ = 0.821569391, c₂ = 0.913830846, p³(c₂) = 0.566968021; n = 1 bound (153) and minimum 1/2 at 1/2 + 2^(−4/3) confirmed; n = 1..8 curves increase with n |
 | Sect. 7.2, F = 8/9 | LP (158) with all three rules: 8/9 for every tested d (2–10, 12, 16, 20, 50, 100); unrestricted SDP on the full d⁴×d⁴ Choi matrix (no idempotents, no extra symmetry): 8/9 for d = 2, 3 | value correct; notebook issues below |
 | Example 7.2 (d = 2), 7.3 (d = 3) | support function of the region defined by (160)–(169) vs. a direct SDP over the full Choi matrix, 42 directions | agree to ≤ 2·10⁻⁷; symmetric optimum 5/9 (d=2), 1/2 (d=3) = universal cloner |
 | Table 2 (16 entries) | symmetry-reduced comb SDP, written independently (`review/table2_check.py`) | see Table 2 section below |
-| Table 2, Uᵀ, d = 2, n = 4 (exact) | the exact comb in `guess_magic_4_1_2.nb` checked on the full 1024×1024 Choi matrix (`review/app4_certificate_check.py`) | PSD, comb conditions and fidelity 1 hold exactly |
+| Table 2, Uᵀ, d = 2, n = 4 (exact) | the exact comb in `guess_magic_4_1_2.nb` (`review/app4_certificate_check.py`) | blocks exactly PSD and the 672 trace/comb constraints exactly 0; on the full 1024×1024 Choi matrix C ≥ 0, the comb conditions and fidelity 1 (output channel Uᵀ for random U) hold to ~1e-15 in floating point |
 
 ## Findings in the code
 
@@ -143,7 +144,8 @@ were removed rather than regenerated.
   i.e. it is an anti-homomorphism. Harmless for the stored idempotents (they are flip-symmetric),
   wrong for general elements. `app3.nb`'s `ψ` (`ketbra[in, ip, …]`) uses the same transposed
   convention, again harmless there because only idempotents and a generic Hermitian combination are mapped.
-  `psi_one_wb` also ignores its `K` argument (always `QQ`), and `index_range` is unused.
+  `psi_one_wb` also ignores its `K` argument (always `QQ`), and `index_range` only pre-initialises
+  `i_j_dict`, whose entries are all overwritten.
 * **`jucys_murphy(1)` returns 0 when p = 0**, but eq. (85) gives J₁ = δ. The `+δ` term is set
   inside `for i in range(1, j)` (`wba_tools.py:113-114`), which is empty for j = 1. It has no
   effect on the database (that edge has a single child, so its interpolating polynomial is 1),
@@ -169,32 +171,12 @@ them byte for byte).
   (it hard-codes the traces Σ_λ c_λ f^λ s_λ(λ₀, λ₁) in `pData`; all eight are correct). *(Fixed.)*
 * Sect. 7.4 (Table 2) code is missing. *(Fixed.)*
 * `generate_walled_brauer_idempotents.ipynb` cell 4 loops to p+q = 7, but its saved output ends in a
-  `KeyboardInterrupt`: all pairs up to p+q = 7 finished in the symbolic loop, and the run was
-  interrupted in the numeric-d loop for (p,q) = (0,7). The traceback also shows that the executed code
+  `KeyboardInterrupt`: all pairs with p+q ≤ 6 finished; of the p+q = 7 pairs only (0,7) was reached,
+  its symbolic step finished (2 h 59 min wall time), and the run was interrupted in its numeric-d loop. The traceback also shows that the executed code
   wrote to `./idempotents_db/`, not `./wba_idempotents_db/`. The repository contains p+q ≤ 6 plus
   (7,0,2). *(Outputs cleared, loop set to p+q ≤ 6.)*
 * `bratelli_diagram_walled_brauer.ipynb` depends on the third-party `slabbe` package and shadows the
   builtin `ord`. *(Fixed.)*
-
-## Readability suggestions (`wba_tools.py`, notebooks)
-
-* Merge the `_d` duplicates (`walled_brauer_irreducibles[_d]`, `bratteli_antecedents[_d]`,
-  `bratteli_descendants[_d]`, `gelfand_tsetlin_basis[_d]`, `interpolating_polynomial_lambda_mu[_d]`)
-  into one function with `d=None`.
-* Define the walled-pairing predicate once (it is written out twice, lines 17-20 and 31-34).
-* Remove dead code: the half-integer branch of `WalledBrauerDiagrams.__init__` (copied from
-  `BrauerDiagrams`; walled Brauer orders are always integers), `interpolating_polynomial_lambda_mu_d`,
-  the unused `index_range`.
-* Replace `from sage.combinat.diagram_algebras import *` by explicit imports, and add docstrings that
-  state conventions: which row is "top", the product order, the content rule and the JM formula
-  (with equation numbers of the paper).
-* In the generation notebook: hoist `jucys_murphy(k+1)` out of the inner loop (it is recomputed per
-  edge), pass an explicit `symbolic=True` flag instead of comparing `d == var('z')`, use `with open(...)`,
-  and don't shadow `file`.
-* Exchange data with Mathematica in a structured format (JSON, or a Mathematica-readable dump)
-  instead of re-parsing Sage's `str()` output with string substitutions (`Parse` in `app2.nb`/`app3.nb`),
-  which breaks if Sage changes its printing.
-* Typos in Mathematica comments: "Pares", "Rmove", "curcly", "eingevectors". *(Fixed.)*
 
 ### 5. Sect. 7.4 notebooks (added after the first review)
 
@@ -224,6 +206,26 @@ would be d^{−(n+1)} times the values of Table 2. The values in Table 2 (and th
 normalisation C₀ = 1, i.e. Tr_{I₁} C₁ = 1_P and Tr C = d^{n+1}, for which Tr(C Ω_{n,d}) is the average
 channel fidelity. Eq. (171) should read Tr C = d^{n+1}.
 
+## Readability suggestions (`wba_tools.py`, notebooks)
+
+* Merge the `_d` duplicates (`walled_brauer_irreducibles[_d]`, `bratteli_antecedents[_d]`,
+  `bratteli_descendants[_d]`, `gelfand_tsetlin_basis[_d]`, `interpolating_polynomial_lambda_mu[_d]`)
+  into one function with `d=None`.
+* Define the walled-pairing predicate once (it is written out twice, lines 17-20 and 31-34).
+* Remove dead code: the half-integer branch of `WalledBrauerDiagrams.__init__` (copied from
+  `BrauerDiagrams`; walled Brauer orders are always integers), `interpolating_polynomial_lambda_mu_d`,
+  the redundant `index_range`/`i_j_dict` initialisation.
+* Replace `from sage.combinat.diagram_algebras import *` by explicit imports, and add docstrings that
+  state conventions: which row is "top", the product order, the content rule and the JM formula
+  (with equation numbers of the paper).
+* In the generation notebook: hoist `jucys_murphy(k+1)` out of the inner loop (it is recomputed per
+  edge), pass an explicit `symbolic=True` flag instead of comparing `d == var('z')`, use `with open(...)`,
+  and don't shadow `file`.
+* Exchange data with Mathematica in a structured format (JSON, or a Mathematica-readable dump)
+  instead of re-parsing Sage's `str()` output with string substitutions (`Parse` in `app2.nb`/`app3.nb`),
+  which breaks if Sage changes its printing.
+* Typos in Mathematica comments: "Pares", "Rmove", "curcly", "eingevectors". *(Fixed.)*
+
 ## Table 2
 
 Table 2 is reproduced with an independent, symmetry-reduced formulation (`review/table2_check.py`):
@@ -231,9 +233,9 @@ C is expanded in walled Brauer diagrams of B_{n,1} ⊗ B_{n,1} (transposition) o
 B_{n+1,0} ⊗ B_{n+1,0} (inversion), all (partial) traces are diagrammatic, operator equalities are
 imposed through Hilbert–Schmidt inner products (valid also for d < p+q where ψ_d is not faithful),
 and positivity is imposed on the compression of C to V_λ ⊗ V_μ, using the cyclic submodule generated
-by a single vector (so no basis alignment is needed). The fidelity is (1/d²) Tr[C X_I] with X_I
-the product of maximally entangled projectors on I_i O_i and P F, which equals the Haar average for
-covariant C.
+by a single vector (so no basis alignment is needed). The fidelity is (1/d²) Tr[C X_I] with
+X_I = ⊗_i |I⟩⟩⟨⟨I|_{I_i O_i} ⊗ |I⟩⟩⟨⟨I|_{PF}, where |I⟩⟩ = Σ_i |ii⟩ is unnormalised; for covariant C
+this equals the Haar average.
 
 | f(U) | d | n = 1 | n = 2 | n = 3 | n = 4 |
 |---|---|---|---|---|---|

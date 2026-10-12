@@ -66,15 +66,17 @@ wba_tools.py ─▶ generate_walled_brauer_idempotents.ipynb ─▶ wba_idempote
 ## Requirements
 
 - **SageMath** ≥ 9.4 for `wba_tools.py` and the two Sage notebooks (the code also runs on Sage 10.x).
-  `bratteli_diagram_walled_brauer.ipynb` uses `sage.misc.latex_standalone.TikzPicture`, which was merged into
-  SageMath from the `slabbe` package in 2021; on an older Sage, install `slabbe` and import `TikzPicture` from it.
+  `bratteli_diagram_walled_brauer.ipynb` uses `sage.misc.latex_standalone.TikzPicture`, which is part of SageMath
+  since version 9.6; on SageMath 9.4/9.5, install the `slabbe` package and use `from slabbe import TikzPicture` in the
+  last cell.
   The red edges, the content labels and the layered layout need `dot2tex` and `graphviz`; the PDF output needs a
   LaTeX installation with `tikz`, `tkz-graph` and `tkz-berge`.
 - **Wolfram Mathematica** ≥ 12.3 for the notebooks (`LinearOptimization`, `SemidefiniteOptimization`).
   `app3.nb` uses `ResourceFunction["MatrixPartialTrace"]`, which needs access to the Wolfram Function Repository.
 - **Python 3** with `numpy`, `scipy`, `sympy` and `cvxpy` for the verification scripts in `review/`.
-- Memory: `app4.nb` with n = 4, d = 3 (`{4, 1, 3}`) builds very large symbolic expressions (one failed run reported a
-  13.6 GB intermediate expression), so it needs a large-memory machine. All other cases run on a laptop.
+- Memory: `app4.nb` with n = 4, d = 3 (`{4, 1, 3}` for U^T and `{5, 0, 3}` for U^{-1}, both with 103² = 10609 ansatz
+  terms of size 120 × 120) builds very large expressions (one failed `{4, 1, 3}` run reported a 13.6 GB intermediate
+  expression), so these two cases need a large-memory machine.
 
 ## Usage
 
@@ -100,7 +102,7 @@ byte; the other 15 differ only in how coefficients are printed).
 | Paper | Value | Notebook |
 |---|---|---|
 | Ex. 7.1 | p³_{2,2}(c), eq. (152); minimum 0.566968 at c₂ ≈ 0.913831 | `app1.nb` |
-| Sect. 7.2 | F = 8/9 for all d ≥ 3 | `app2.nb` |
+| Sect. 7.2 | F = 8/9 for all d ≥ 2 | `app2.nb` (d ≥ 3; d = 2 is checked in `review/`) |
 | Exs. 7.2, 7.3 | blocks (160)–(169); symmetric optimum 5/9 (d = 2), 1/2 (d = 3) | `app3.nb` |
 | Table 2 | U^T, d = 2: 0.5, 0.75, 0.933013, 1; d = 3: 0.222222, 0.407407, 0.626597, 0.799250 | `app4.nb` |
 | Table 2 | U^{-1}, d = 2: as U^T; d = 3: 0.222222, 0.333333, 0.444444, 0.555556 | `app4.nb` |

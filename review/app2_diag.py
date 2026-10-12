@@ -89,13 +89,15 @@ def lp(d, with123, db=None, solution=None):
     return -res.fun, res.x[:n], paths
 
 
-def notebook_solution(d):
-    """Closed form printed in app2.nb ('General d solution'), weights in DB path order."""
+def original_solution(d):
+    """Closed form printed in the originally published app2.nb ('General d solution'; replaced by
+    corrected_solution in the current app2.nb), weights in DB path order."""
     return [0, 0, 0, Fr(d - 2, (d - 3) * (d + 1)), Fr(d + 2, 3), 0, 0, Fr(2 * (d + 1), 3), Fr(2 * (d + 1), 3), 0]
 
 
 def corrected_solution(d):
-    """Closed form satisfying all three rules of eq. (156) for every d >= 3 (equals app2.nb's d = 3 solution)."""
+    """Closed form satisfying all three rules of eq. (156) for every d >= 3 (equals app2.nb's d = 3 solution;
+    the 'General d solution' of the current app2.nb)."""
     return [0, 0, 0, 0, Fr(d + 2, 3), 0, 0, Fr(2 * (d + 1), 3), Fr(2 * (d + 1), 3), Fr(d - 2, 3)]
 
 
@@ -105,12 +107,12 @@ if __name__ == '__main__':
         F1, v, paths = lp(d, True)
         out = 'd=%3d  LP F(no 123)=%.10f  F(with 123)=%.10f' % (d, F0, F1)
         if d >= 4:
-            for name, sol in (('notebook', notebook_solution(d)), ('corrected', corrected_solution(d))):
+            for name, sol in (('original notebook', original_solution(d)), ('corrected', corrected_solution(d))):
                 chk = lp(d, True, solution=sol)
                 out += '  | %s: F=(%s) TP-residual=%s' % (name, ', '.join(str(x) for x in chk['fid']),
                                                           max(abs(x) for x in chk['tp']))
         print(out, flush=True)
-    # F_123 of the notebook's closed-form solution equals (5d+8)/(6(d+1)) -> below 8/9 for d >= 9
+    # F_123 of the original notebook's closed-form solution equals (5d+8)/(6(d+1)) -> below 8/9 for d >= 9
     for D in range(4, 13):
-        assert lp(D, True, solution=notebook_solution(D))['fid'][2] == Fr(5 * D + 8, 6 * (D + 1))
-    print('F_123(notebook solution) == (5d+8)/(6(d+1)) for d = 4..12')
+        assert lp(D, True, solution=original_solution(D))['fid'][2] == Fr(5 * D + 8, 6 * (D + 1))
+    print('F_123(original notebook solution) == (5d+8)/(6(d+1)) for d = 4..12')
