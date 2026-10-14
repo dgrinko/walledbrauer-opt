@@ -1,0 +1,5 @@
+(* Created with the Wolfram Language for Students - Personal Use Only : www.wolfram.com *)
+{{{{1/6, 1/6, 1/6, 1/6, 1/6, 1/6}}}, 
+ {{{1/3, 1/6, -1/3, -1/6, -1/6, 1/6}, {0, -1/2*1/Sqrt[3], 0, -1/2*1/Sqrt[3], 
+    1/(2*Sqrt[3]), 1/(2*Sqrt[3])}}, {{0, -1/2*1/Sqrt[3], 0, 1/(2*Sqrt[3]), 
+    -1/2*1/Sqrt[3], 1/(2*Sqrt[3])}, {1/3, -1/6, 1/3, -1/6, -1/6, -1/6}}}}
