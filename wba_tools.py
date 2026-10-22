@@ -26,8 +26,10 @@ class WalledBrauerDiagram(BrauerDiagram):
         super(BrauerDiagram, self).__init__(parent, d, check=check)
 
     def check(self):
-        if any(len(i) != 2 for i in self):
-            raise ValueError("all blocks of %s must be of size 2" % self)
+        # Validate the complete ground set as well as the size of each block.
+        super().check()
+        if len(self) != self.parent().order:
+            raise ValueError("a diagram must contain p + q disjoint pairs")
         if any(((i[0]*i[1] > 0 and abs(i[0]) <= self.p and abs(i[1]) <= self.p) 
                         or (i[0]*i[1] > 0 and abs(i[0]) > self.p and abs(i[1]) > self.p) 
                         or (i[0]*i[1] < 0 and abs(i[0]) <= self.p and abs(i[1]) > self.p) 
@@ -41,29 +43,29 @@ class WalledBrauerDiagrams(BrauerDiagrams):
     _diagram_func = walled_brauer_diagrams
     
     def __init__(self, p, q, category=None):
+        if p not in NN or q not in NN:
+            raise ValueError("walled Brauer ranks p and q must be nonnegative integers")
         if category is None:
             category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
-        order = p+q
-        self.p = p
-        self.q = q
-        if order in ZZ:
-            self.order = ZZ(order)
-            base_set = frozenset(list(range(1,order+1)) + list(range(-order,0)))
-        else:
-            #order is a half-integer.
-            self.order = QQ(order)
-            base_set = frozenset(list(range(1,ZZ(ZZ(1)/ZZ(2) + order)+1))
-                                 + list(range(ZZ(-ZZ(1)/ZZ(2) - order),0)))
-        self._set = base_set
+        self.p = ZZ(p)
+        self.q = ZZ(q)
+        self.order = self.p + self.q
+        self._set = frozenset(list(range(1, self.order + 1))
+                              + list(range(-self.order, 0)))
     
     def __contains__(self, obj):
-        if self.order in ZZ:
-            r = ZZ(self.order)
-        else:
-            r = ZZ(self.order + ZZ(1)/ZZ(2))
-        return super(BrauerDiagrams, self).__contains__(obj) and [len(i) for i in obj] == [2]*r
-    
+        # The inherited shortcut accepts typed Brauer diagrams without checking
+        # the wall. Reconstruct in this parent so every input is checked alike.
+        try:
+            self.element_class(self, obj, check=True)
+        except (TypeError, ValueError):
+            return False
+        return True
+
+    def cardinality(self):
+        """Return (p + q)!, the number of walled Brauer diagrams."""
+        return self.order.factorial()
     
     def __iter__(self):
         for i in self._diagram_func.__func__(self.p,self.q):
@@ -93,6 +95,12 @@ class WalledBrauerAlgebra(BrauerAlgebra):
         return DiagramAlgebra._element_constructor_(self, set_partition)
     
     def jucys_murphy(self, j):
+        """Return the Jucys--Murphy element with the contents of Sect. 5.3.
+
+        At p = 0, use J_1 = delta * 1, the content of the first right
+        addition. This resolves the overlapping k = 1 and k > p clauses
+        in the published eq. (85).
+        """
         if j < 1:
             raise ValueError("Jucys-Murphy index must be positive")
         k = self.order()
@@ -105,14 +113,15 @@ class WalledBrauerAlgebra(BrauerAlgebra):
         R = self.base_ring()
         one = R.one()
         diagrams = WalledBrauerDiagrams(self.p, self.q)
-        coeffs = {self.one_basis(): R(self.d) if j > self.p else R.zero()}   # + delta, eq. (85)
+        coeffs = {self.one_basis(): R(self.d) if j > self.p else R.zero()}
+        # _from_dict requires canonical basis indices, including the identity.
         for i in range(1, j):
             transposition = convertI([[i, -j], [j, -i]])
             contraction = convertI([[i, j], [-i, -j]])
             if transposition in diagrams:        # i, j on the same side of the wall
-                coeffs[transposition] = one
+                coeffs[diagrams(transposition)] = one
             if contraction in diagrams:          # i, j on different sides of the wall
-                coeffs[contraction] = -one
+                coeffs[diagrams(contraction)] = -one
         return self._from_dict(coeffs, remove_zeros=True)
     
 
@@ -121,14 +130,12 @@ class WalledBrauerAlgebra(BrauerAlgebra):
 ##############################################################
 
 def vectorize_element_wb(v,lst,K):
+    """Return coefficients in the requested diagram order, including for zero."""
     vec = zero_vector(K,len(lst))
     coefs_dict = v.monomial_coefficients()
-    par = list(coefs_dict.keys())[0].parent()
-    for i in range(len(lst)):  
-        try:
-            vec[i]=coefs_dict[par(lst[i])]
-        except KeyError:
-            vec[i]=0
+    diagrams = v.parent().basis().keys()
+    for i, diagram in enumerate(lst):
+        vec[i] = coefs_dict.get(diagrams(diagram), 0)
     return vec
 
 def psi_one_wb(diag,d,p,q,K):

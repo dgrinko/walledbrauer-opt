@@ -18,13 +18,14 @@ database, and the Mathematica notebooks for the four applications of Sect. 7.
 | File | Language | Paper | What it does |
 |---|---|---|---|
 | [`wba_tools.py`](wba_tools.py) | SageMath | Sects. 3.2, 4.7, 5 | Walled Brauer algebra B^δ_{p,q} (`WalledBrauerAlgebra`), Jucys–Murphy elements (eq. 85), Bratteli diagram, contents (Sect. 5.3), interpolating polynomials (eq. 77), the matrix representation ψ^d_{p,q} (eq. 41) |
-| [`generate_walled_brauer_idempotents.ipynb`](generate_walled_brauer_idempotents.ipynb) | SageMath | Sects. 4.7, 5.6 | Computes the primitive idempotents ε_T of the Gelfand–Tsetlin basis and writes `wba_idempotents_db/` |
+| [`generate_walled_brauer_idempotents.ipynb`](generate_walled_brauer_idempotents.ipynb) | SageMath | Sects. 4.7, 5.6 | Computes the primitive idempotents ε_T of the Gelfand–Tsetlin basis; regeneration writes to `generated/wba_idempotents_db/` |
 | [`bratteli_diagram_walled_brauer.ipynb`](bratteli_diagram_walled_brauer.ipynb) | SageMath | Figs. 1–3 | Bratteli diagram of B_{p,q} with edge contents; edges removed by the truncation len λˡ + len λʳ ≤ d are red |
-| [`compute_matrix_units_and_blocks.nb`](compute_matrix_units_and_blocks.nb) | Mathematica | App. D | Converts the Sage idempotents to Mathematica, builds aligned matrix units ε^λ_ij and the irreducible blocks of every diagram; writes `idempotents/` and `blocks/` |
-| [`app1.nb`](app1.nb) | Mathematica | Sect. 7.1, Ex. 7.1, Fig. 5 | Deciding the principal eigenvalue of a qubit state from n copies |
+| [`compute_matrix_units_and_blocks.nb`](compute_matrix_units_and_blocks.nb) | Mathematica | App. D | Converts the Sage idempotents to Mathematica, builds aligned matrix units ε^λ_ij and irreducible blocks; compares fresh exports with `idempotents/` and `blocks/` |
+| [`app1.nb`](app1.nb) | Mathematica | Sect. 7.1, Ex. 7.1, Figs. 4–5 | Deciding the principal eigenvalue of a qubit state from n copies |
 | [`app2.nb`](app2.nb) | Mathematica | Sect. 7.2 | Quantum majority vote for 3 inputs; LP (158), optimum F = 8/9 |
 | [`app3.nb`](app3.nb) | Mathematica | Sect. 7.3, Exs. 7.2–7.3, Figs. 6–7 | Asymmetric 1 → 3 cloning: SDP blocks (160)–(169) and feasible regions |
 | [`app4.nb`](app4.nb) | Mathematica | Sect. 7.4, Table 2 | Optimal sequential superchannel transforming n calls of U into U^T or U^{-1} |
+| [`app4_tools.wl`](app4_tools.wl) | Wolfram Language | Sect. 7.4 | Shared diagram operations and the `App4Solve` implementation used by the numerical notebook and exact certificate |
 | [`guess_magic_4_1_2.nb`](guess_magic_4_1_2.nb) | Mathematica | Sect. 7.4 | Exact optimal comb for U ↦ U^T with n = 4, d = 2 (fidelity 1) |
 | [`archive/`](archive/) | Mathematica | – | Earlier working versions of `app4.nb` and a Mathematica Bratteli-diagram notebook, kept for reference (see [`archive/README.md`](archive/README.md)) |
 
@@ -64,52 +65,72 @@ wba_tools.py ─▶ generate_walled_brauer_idempotents.ipynb ─▶ wba_idempote
 
 ## Requirements
 
-- **SageMath** ≥ 9.4 for `wba_tools.py` and the two Sage notebooks (the code also runs on Sage 10.x).
+- **SageMath 10.9** is the tested runtime for `wba_tools.py` and both Sage notebooks.
+  The core code was originally developed with SageMath 9.4.
   `bratteli_diagram_walled_brauer.ipynb` uses `sage.misc.latex_standalone.TikzPicture`, which is part of SageMath
   since version 9.6; on SageMath 9.4/9.5, install the `slabbe` package and use `from slabbe import TikzPicture` in the
   last cell.
   The red edges, the content labels and the layered layout need `dot2tex` and `graphviz`; the PDF output needs a
   LaTeX installation with `tikz`, `tkz-graph` and `tkz-berge`.
-- **Wolfram Mathematica** ≥ 12.3 for the notebooks (`LinearOptimization`, `SemidefiniteOptimization`).
+  The tested combination is `dot2tex==2.11.3` with `pyparsing==3.1.4`; dot2tex 2.11.3 fails to parse the
+  graph labels with pyparsing 3.3.3. Install compatible packages in the Sage environment when rendering figures.
+- **Wolfram Mathematica** ≥ 12.3 for the notebooks (`LinearOptimization`, `SemidefiniteOptimization`);
+  version **15.0.1**, including the front end, is the tested runtime.
   `app3.nb` uses `ResourceFunction["MatrixPartialTrace"]`, which needs access to the Wolfram Function Repository.
-- Memory: `app4.nb` with n = 4, d = 3 (`{4, 1, 3}` for U^T and `{5, 0, 3}` for U^{-1}, both with 103² = 10609 ansatz
-  terms of size 120 × 120) builds very large expressions (one failed `{4, 1, 3}` run reported a 13.6 GB intermediate
-  expression), so these two cases need a large-memory machine.
+- Memory: the default notebooks use small examples. The optional exact comb expansion can become very large
+  at n = 4, d = 3 (10,609 terms of size 120 × 120) and is disabled by default. The numerical
+  path and exact certificate are separate. Large parameter choices still require care with memory
+  and can take several minutes or longer. The four-call qubit certificate can be evaluated without
+  running the numerical optimizer.
 
 ## Usage
 
-Open the notebooks from the repository root: they locate the data folders with `NotebookDirectory[]`.
+Open the Mathematica notebooks from the repository root: they locate their inputs with `NotebookDirectory[]`.
+Run each from the top in a fresh kernel or its isolated notebook context.
+For the Sage notebooks, select a SageMath kernel whose working directory is the repository root.
+Sections explain parameters, paper references and expected results; compact saved outputs come from native execution.
 
 | Notebook | Parameters | Remarks |
 |---|---|---|
 | `app1.nb` | `d = 2`, `k = 2`, `pMax = 8` copies | the optional `traceNew` check takes a few minutes for n = 7 |
-| `app2.nb` | `{p, q, d} = {3, 1, d}` with `d ≥ 3` | d = 2 is not supported: trace preservation is imposed by matching diagram coefficients, which needs ψ^d to be faithful (eq. (118)); the paper also establishes F = 8/9 at d = 2 |
-| `app3.nb` | `{p, q, d} = {1, 3, 2}` or `{1, 3, 3}` | a check cell after `In[1174]` tests that the blocks read off the eigenvectors are aligned (must return ≈ 0); `blocks/blocks_1_3_d.m` give the same blocks independently of any basis choice |
-| `app4.nb` | `{p, q, d} = {n, 1, d}` for U^T, `{n + 1, 0, d}` for U^{-1}; default `{3, 1, 3}` (expected 0.626597) | the comb is normalised as Tr C = d^{n+1} (C₀ = 1), so that the objective is the average channel fidelity; the Tr C = 1 printed in eq. (171) does not match this convention |
-| `guess_magic_4_1_2.nb` | – | not self-contained: first evaluate the definition cells of `app4.nb` with `{p, q, d} = {4, 1, 2}`; its last cell checks the 672 exact constraints in `app4_data/eq_4_1_2_exact.m` and must return `{0}` |
+| `app2.nb` | `d = 4` by default; integer `d ≥ 3`, with wall `(3,1)` | d = 2 is not supported: trace preservation is imposed by matching diagram coefficients, which needs ψ^d to be faithful (eq. (118)) |
+| `app3.nb` | d = 2 or 3, with wall `(1,3)` | aligned irreducible blocks and dimension-dependent permutation symmetries are checked before the cloning SDP; pᵢ denotes a depolarizing parameter |
+| `app4.nb` | `task = "transpose"` or `"inverse"`; `n` calls; dimension `d`; default n = d = 3 | expected default fidelity 0.626597; reports equality/PSD residuals and Table 2 agreement; `verifyExactAnsatz` is an optional independent coefficient check |
+| `guess_magic_4_1_2.nb` | fixed n = 4, d = 2 transposition | initializes itself, checks all 672 exact constraints and PSD/normalization/fidelity; the residual set must be `{0}` |
 
-To rebuild the data: run `generate_walled_brauer_idempotents.ipynb` from the repository root (writes
-`wba_idempotents_db/`; p + q ≤ 6 takes a few minutes, p + q = 7 several hours), then
-`compute_matrix_units_and_blocks.nb` with the (p, q, d) you need in its two `Do` loops (writes `idempotents/` and
-`blocks/`; existing `elementary_*.m` files are reused, delete them to force a recomputation). With the current
-`wba_tools.py` the regenerated idempotents are mathematically identical to the stored ones (72 of 87 files byte for
-byte; the other 15 differ only in how coefficients are printed).
+To regenerate the Sage data, run `generate_walled_brauer_idempotents.ipynb` with `max_total = 6`.
+The default `max_total = 4` writes 28 files; six sites writes all 87 files through that rank.
+Outputs go to `generated/wba_idempotents_db/`, keeping the supplied database intact.
+Equivalent rational-function coefficients can have different printed forms.
+The seven-site file is separate; rank-seven generation can take hours.
+The Bratteli notebook writes editable TeX and PDF figures to `generated/bratteli_figures/`.
+
+`compute_matrix_units_and_blocks.nb` reads the supplied Sage data and regenerates its selected `cases`
+into a fresh temporary `outputRoot`, printed in the notebook.
+The default cases `(4,1,2)` and `(4,1,3)` produce eight files and compare them exactly with the supplied
+`idempotents/` and `blocks/` files. Matrix units are recomputed rather than reused from an old export.
+Choose the destination explicitly when replacing data; the application notebooks normally read the supplied folders.
 
 ## Results
 
 | Paper | Value | Notebook |
 |---|---|---|
 | Ex. 7.1 | p³_{2,2}(c), eq. (152); minimum 0.566968 at c₂ ≈ 0.913831 | `app1.nb` |
-| Sect. 7.2 | F = 8/9 for all d ≥ 2 | `app2.nb` (d ≥ 3) |
-| Exs. 7.2, 7.3 | blocks (160)–(169); symmetric optimum 5/9 (d = 2), 1/2 (d = 3) | `app3.nb` |
+| Sect. 7.2 | F = 8/9 for all d ≥ 2 | `app2.nb` implements d ≥ 3 |
+| Exs. 7.2, 7.3 | blocks (160)–(169); symmetric depolarizing parameter pᵢ = 5/9 (d = 2), 1/2 (d = 3) | `app3.nb` |
 | Table 2 | U^T, d = 2: 0.5, 0.75, 0.933013, 1; d = 3: 0.222222, 0.407407, 0.626597, 0.799250 | `app4.nb` |
 | Table 2 | U^{-1}, d = 2: as U^T; d = 3: 0.222222, 0.333333, 0.444444, 0.555556 | `app4.nb` |
 
-## Notes
+For cloning, eq. (159) defines Φᵢ(ρ) = pᵢρ + (1 − pᵢ)I/d. The pure-state clone fidelity is
+Fᵢ = pᵢ + (1 − pᵢ)/d, so the symmetric fidelities are **7/9** for d = 2 and **2/3** for d = 3.
 
-- The notebooks were cleaned up in October 2026 by editing their source text, without Mathematica.
-  Saved outputs that no longer matched the code were removed; re-run a notebook from the top before relying on its outputs. `app1.nb` and `app3.nb` still contain outputs from several
-  sessions (non-sequential `In`/`Out` labels, mixed d = 2 and d = 3 state in `app3.nb`).
+## Paper conventions and corrections
+
+- **Eq. (171), published p. 50:** the comb normalization should be Tr C = dⁿ⁺¹, with C₀ = 1.
+  The printed Tr C = 1 is inconsistent with the objective and the values of Table 2.
+- **Table 7, published p. 67:** `3,62,879` is a digit-grouping typo for **362,879**.
+- **Eq. (85), published p. 28:** the clauses overlap when p = 0, k = 1. The code uses
+  J₁ = δI for p = 0, consistent with the right-addition content in Sect. 5.3; for p > 0, J₁ = 0.
 - Partial-trace constraints are imposed by comparing diagram coefficients, which requires ψ^d to be faithful on the
   traced-out algebra (eq. (118) of the paper); `app4.nb` instead maps these constraints to irreducible blocks and
   works for every d.
