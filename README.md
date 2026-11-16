@@ -1,5 +1,10 @@
 # walledbrauer-opt
 
+[![arXiv](https://img.shields.io/badge/arXiv-2207.05713-b31b1b.svg)](https://arxiv.org/abs/2207.05713)
+[![DOI](https://img.shields.io/badge/DOI-10.1007%2Fs00220--024--05108--1-blue.svg)](https://doi.org/10.1007/s00220-024-05108-1)
+[![Wolfram Language](https://img.shields.io/badge/Wolfram_Language-12.3%2B-DD1100.svg)](#requirements)
+[![SageMath](https://img.shields.io/badge/SageMath-10.9-blue.svg)](#requirements)
+
 Code and data for
 
 > D. Grinko and M. Ozols, *Linear Programming with Unitary-Equivariant Constraints*,
@@ -137,17 +142,20 @@ Fᵢ = pᵢ + (1 − pᵢ)/d, so the symmetric fidelities are **7/9** for d = 2 
 
 ## Citation
 
+If you use this code, please cite the paper:
+
 ```bibtex
 @article{GrinkoOzols2024,
-  author  = {Grinko, Dmitry and Ozols, Maris},
-  title   = {Linear Programming with Unitary-Equivariant Constraints},
-  journal = {Communications in Mathematical Physics},
-  volume  = {405},
-  number  = {12},
-  pages   = {278},
-  year    = {2024},
-  doi     = {10.1007/s00220-024-05108-1},
-  eprint  = {2207.05713},
-  archivePrefix = {arXiv}
+  author        = {Grinko, Dmitry and Ozols, Maris},
+  title         = {Linear Programming with Unitary-Equivariant Constraints},
+  journal       = {Communications in Mathematical Physics},
+  volume        = {405},
+  number        = {12},
+  pages         = {278},
+  year          = {2024},
+  doi           = {10.1007/s00220-024-05108-1},
+  eprint        = {2207.05713},
+  archivePrefix = {arXiv},
+  primaryClass  = {quant-ph}
 }
 ```
